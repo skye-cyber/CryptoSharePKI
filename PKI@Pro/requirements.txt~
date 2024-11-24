@@ -1,0 +1,9 @@
+
+requests
+watchdog
+flask
+colorama
+cryptography
+uwsgi
+pywin32
+python-magic

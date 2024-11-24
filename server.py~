@@ -1,0 +1,48 @@
+import os
+import subprocess
+
+from flask import Flask, request, send_from_directory
+
+app = Flask(__name__)
+'''
+Any changes you make in this file must also be updated in the other scripts: (host_importer.py)
+'''
+# Path to the directory storing certificates
+cert_dir = os.path.abspath("./pki_certs/")
+
+# Ensure the directory exists
+os.makedirs(cert_dir, exist_ok=True)
+
+# Path to the server key and certificate files
+fpath = 'WondervilleRootCA.key')
+cert_path = os.path.join(cert_dir, 'WondervilleRootCA.crt')
+
+
+def get_serverCert():
+    # Run the OpenSSL command to generate the server certificate
+    subprocess.run([
+        'openssl', 'req', '-x509', '-newkey', 'rsa:2048',
+        '-keyout', fpath,
+        '-out', cert_path,
+        '-days', '365',
+        '-nodes',
+        '-subj', '/CN=CertServer'
+    ])
+
+
+# Generate the server certificate
+# get_serverCert()
+
+
+@app.route('/<filename>', methods=['GET'])
+def download_file(filename):
+    file_path = os.path.join(cert_dir, filename)
+    print(file_path)
+    if os.path.exists(file_path):
+        return send_from_directory(cert_dir, filename, as_attachment=True)
+    else:
+        return "File not found", 404
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=5000, ssl_context=(cert_path, fpath))

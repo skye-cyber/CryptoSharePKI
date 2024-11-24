@@ -1,0 +1,17 @@
+[
+    {
+    "host": "192.168.1.101",
+    "user": "user1",
+    "pfx_file": "host1.pfx"
+    },
+    {
+    "host": "192.168.1.102",
+    "user": "user2",
+    "pfx_file": "host2.pfx"
+    },
+    {
+    "host": "172.17.88.189",
+    "user": "CA_user",
+    "pfx_file": "host2.pfx"
+    }
+]
