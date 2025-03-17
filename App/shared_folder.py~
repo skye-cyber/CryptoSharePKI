@@ -6,7 +6,7 @@ from flask import (Flask, after_this_request, render_template, request,
                    send_from_directory)
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "~/D"  # "/shared_docs"
+UPLOAD_FOLDER = "~/Documents"  # "/shared_docs"
 UPLOAD_FOLDER = os.path.expanduser(UPLOAD_FOLDER)  # Expand the user directory
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 template = 'index.html'
@@ -108,6 +108,14 @@ def list_files():
     except Exception as e:
         print(str(e))
         return None
+
+
+def share(host="0.0.0.0:9001"):
+    if ':' in host:
+        ip, port = host.split(':')
+    elif len(host) <= 4:
+        ip, port = "0.0.0.0", host
+    app.run(host="0.0.0.0", port=int(port))
 
 
 if __name__ == "__main__":

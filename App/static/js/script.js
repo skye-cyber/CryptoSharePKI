@@ -60,5 +60,76 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+
+    const openModalButton = document.getElementById('openUploadModal');
+    const closeModalButton = document.getElementById('closeModal');
+    const uploadModal = document.getElementById('uploadModal');
+    const modalContent = document.getElementById('modalContent');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadForm = document.getElementById('uploadForm');
+
+    openModalButton.addEventListener('click', () => {
+        uploadModal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        }, 10);
+    });
+
+    closeModalButton.addEventListener('click', () => {
+        modalContent.classList.remove('scale-100');
+        modalContent.classList.add('scale-95');
+        setTimeout(() => {
+            uploadModal.classList.add('hidden');
+        }, 300);
+    });
+
+    dropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            uploadForm.file.files = event.target.files;
+        }
+    });
+
+    dropZone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropZone.classList.add('border-blue-600', 'dark:border-cyan-600');
+        dropZone.classList.remove('border-blue-400', 'dark:border-cyan-400');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-blue-600', 'dark:border-cyan-600');
+        dropZone.classList.add('border-blue-400', 'dark:border-cyan-400');
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropZone.classList.remove('border-blue-600', 'dark:border-cyan-600');
+        dropZone.classList.add('border-blue-400', 'dark:border-cyan-400');
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            uploadForm.file.files = files;
+        }
+});
+
+const menu_bt = document.getElementById('menu')
+menu_bt.addEventListener('click', () =>{
+     HandleMenu();
+})
+
+document.getElementById('closeMenuModal').addEventListener('click', () =>{
+    HandleMenu();
+})
+
+function HandleMenu() {
+    const menu_modal = document.getElementById('menu_modal')
+    menu_modal.classList.toggle('-translate-x-full');
+    menu_modal.classList.toggle('-translate-x-1')
+}
 });
 
