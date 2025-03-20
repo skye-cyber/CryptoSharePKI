@@ -11,7 +11,7 @@
     <!--<link href="{{ url_for('open_svg_dir', dir='/node_modules/@fortawesome/free-solid-svg-icons') }}">-->
 </head>
 <body class="bg-blue-50 dark:bg-zinc-900 max-w-full max-h-full overflow-x-hidden">
-    <section class="w-[98vw] bg-gradient-to-r from-blue-100 to-sky-100 dark:bg-gradient-to-r dark:from-slate-950 dark:to-slate-950 border-2 border-x-blue-400 border-y-cyan-400 mx-2 md:mx-4 my-2 md:my-4 dark:bg-slate-950 shadow-md rounded-md">
+    <section class="w-[98vw] min-h-[100dvh] bg-gradient-to-r from-blue-100 to-sky-100 dark:bg-gradient-to-r dark:from-slate-950 dark:to-slate-950 border-2 border-x-blue-400 border-y-cyan-400 mx-2 md:mx-4 my-2 md:my-4 dark:bg-slate-950 shadow-md rounded-md">
         <div class="absolute mx-2">
             <div class="fixed left-[85vw] md:right-[94vw] p-2 z-50 no-cursor">
                 <button id="theme-toggle" aria-label="Toggle Dark Mode" class="hover:text-yellow-400 transition-colors duration-300 rounded-full p-2 focus:outline-none bg-cyan-400">
@@ -143,7 +143,7 @@
                                     {% endwith %}
                                 </a>
                             {% elif file|mime_type == 'image' or file.endswith('.jpg') or file.endswith('.jpeg') or file.endswith('.png') or file.endswith('.gif') %}
-                                <a href="{{ url_for('download_file', filename=file|split) }}">
+                                <image ="{{ url_for('download_file', filename=file|split) }}">
 
                                     <i>
                                         <svg class="w-8 md:w-12 h-14 md:h-22 hover:scale-110 transition-transform duration-500 ease-in-out transform" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-image" class="svg-inline--fa fa-file-image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
@@ -166,7 +166,7 @@
 
                                     <i>
                                         <svg class="w-14 md:w-14 h-14 md:h-14 hover:scale-110 transition-transform duration-500 ease-in-out transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="3" y="4" width="18" height="16" rx="2" class="stroke-green-700" stroke="#333333" stroke-width="2"/>
+                                        <rect x="3" y="4" width="18" height="16" rx="2" class="stroke-green-700" stroke-width="2"/>
                                         <path d="M8 10V16M16 10V16" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M10 6H14" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M10 14V7C10 7 10 8 9 8C8 8 9 9 9 9V14" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
