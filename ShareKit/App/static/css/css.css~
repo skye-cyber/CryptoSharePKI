@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+overflow-hidden w-full/*Use hyphens when breaking a word*/
+.break-with-hyphens {
+    word-break: break-all;
+    word-wrap: break-word;
+    hyphens: auto;
+}

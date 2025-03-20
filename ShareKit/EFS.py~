@@ -2,15 +2,46 @@ import os
 import zipfile
 import time
 import magic
-from flask import (Flask, after_this_request, render_template, request,
-                   send_from_directory)
+from flask import (Flask, after_this_request, render_template, request, jsonify,
+                   send_from_directory, abort)
+from pathlib import Path
+from .net_scanner import main as scanner
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "~/Documents"  # "/shared_docs"
+UPLOAD_FOLDER = "~/Documents/output"  # "/shared_docs"
 UPLOAD_FOLDER = os.path.expanduser(UPLOAD_FOLDER)  # Expand the user directory
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 template = 'index.html'
+
+app = Flask(__name__, template_folder="App/templates",
+            static_folder="App/static")  # Custom static folder)
+
+devices = []
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+@app.route('/<path:dir>', methods=['GET'])
+def open_svg_dir(dir):
+    try:
+        path = os.path.join(Path(__file__).parent, dir)
+
+        if not os.path.exists(path):
+            abort(404)
+
+        if not os.path.isdir(path):
+            abort(400)  # bad request if it's not a directory
+
+        svg_files = []
+        for filename in os.listdir(path):
+            if filename.lower().endswith('.svg'):
+                svg_files.append(os.path.join(path, filename))
+
+        return render_template(template, svg_files=svg_files)
+
+    except Exception as e:
+        print(str(e))
+        abort(500)
 
 
 @app.route('/upload', methods=['POST'])
@@ -74,7 +105,11 @@ def download_file(filename):
 @app.template_filter('is_directory')
 def is_directory(path):
     try:
-        return os.path.isdir(os.path.join(UPLOAD_FOLDER, path))
+        is_dir = False
+        path = path[1:] if path.startswith('/') else path
+        fpath = os.path.join(UPLOAD_FOLDER, path)
+        is_dir = os.path.isdir(fpath)
+        return is_dir
     except Exception as e:
         print(str(e))
         return None
@@ -100,14 +135,106 @@ def get_mime_type(path):
         return None
 
 
+@app.template_filter('split')
+def split_str(obj, delimiter=UPLOAD_FOLDER):
+    _new = obj.split(delimiter)[-1]
+    _str = _new[1:] if _new.startswith('/') else _new
+    return _str
+
+
+@app.route('/view/<path:dir>', methods=['GET'])
+def open_dir(dir):
+    try:
+        path = os.path.join(UPLOAD_FOLDER, dir)
+
+        if not os.path.exists(path):  # Check if path exists
+            abort(404)  # Return 404 if path doesn't exist
+
+        if not os.path.isdir(path):
+            return [path]  # If it's a file, return the file path
+
+        items = []
+        for item in os.listdir(path):
+            items.append(os.path.join(path, item))
+
+        return render_template(template, files=items, os=os)
+
+    except Exception as e:
+        print(str(e))
+        abort(500)  # Return 500 for internal server error
+
+
 @app.route('/')
-def list_files():
+def net_devices():
+    global devices
+    try:
+        if not devices:
+            devices = scanner('wlan0')
+        return render_template(template, devices=devices, os=os)
+    except Exception as e:
+        raise
+        print(str(e))
+        return None
+
+
+@app.route('/<device>')
+def show_device_shares(device):
     try:
         files = os.listdir(UPLOAD_FOLDER)
         return render_template(template, files=files, os=os)
     except Exception as e:
         print(str(e))
         return None
+
+
+@app.route('/shared/walk')
+def get_shared_files():
+    try:
+        files_ls = []
+        files_ls = [file for _, _, files in os.walk(
+            UPLOAD_FOLDER) for file in files]
+        return jsonify(files_ls)
+    except Exception as e:
+        print(str(e))
+        return None
+
+
+@app.route('/shared/walk/path')
+def get_shared_file_paths():
+    try:
+        files_ls = []
+        for root, dirs, files in os.walk(UPLOAD_FOLDER):
+            for file in files:
+                _files = os.path.join(root, file)
+                files_ls.append(_files)
+        return jsonify(files_ls)
+    except Exception as e:
+        print(str(e))
+        return None
+
+
+@app.route('/shared/list_dir/<dir>')
+def _list_dir(dir):
+    try:
+        for root, dirs, files in os.walk(UPLOAD_FOLDER):
+            for _dir in dirs:
+                if str(_dir) == str(dir):
+                    f_dir = os.path.join(root, _dir)
+                    files = os.listdir(f_dir)
+        return jsonify(files)
+    except Exception as e:
+        print(str(e))
+        return None
+
+
+@app.template_filter('get_icon')
+def get_icon(dev_os):
+    if dev_os.lower().startswith('linux'):
+        return 'images/linux.png'
+    elif dev_os.lower() == "window":
+        return 'images/win10.jpeg'
+    else:
+        return 'images/default-icon.png'
 
 
 def share(host="0.0.0.0:9001"):

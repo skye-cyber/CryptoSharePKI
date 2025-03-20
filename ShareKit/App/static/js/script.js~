@@ -129,7 +129,51 @@ document.getElementById('closeMenuModal').addEventListener('click', () =>{
 function HandleMenu() {
     const menu_modal = document.getElementById('menu_modal')
     menu_modal.classList.toggle('-translate-x-full');
-    menu_modal.classList.toggle('translate-x-1')
+    menu_modal.classList.toggle('-translate-x-1')
 }
+
+const search_bar = document.getElementById('search_bar');
+function setSearchContent(){
+    search_bar.value = document.URL
+}
+setSearchContent();
+/*
+ search_bar.addEventListener('keydown', function(event){
+    if (event.key === "Enter" && !event.shiftKey){
+        console.log("keydown")
+        const response = fetch(search_bar.value, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    }
+})
+*/
+const items = document.querySelectorAll('#shared-item-text');
+
+items.forEach(item => {
+    const maxLength = 6;
+    let text = item.textContent.trim(); // Ensure proper text extraction
+
+    const parts = text.split(".");
+    let formattedText;
+
+    if (parts.length < 2) {
+        formattedText = text; // No extension found, keep as is
+    } else {
+        const extension = parts.pop(); // Extract the file extension
+        let name = parts.join("."); // Join the remaining parts as the name
+
+        if (name.length > maxLength) {
+            name = name.slice(0, maxLength) + "..."; // Truncate and add ellipsis
+        }
+
+        formattedText = `${name}.${extension}`; // Reconstruct the file name
+    }
+
+    item.textContent = formattedText; // Update the DOM element
+});
+
 });
 
