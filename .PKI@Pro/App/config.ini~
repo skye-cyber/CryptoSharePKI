@@ -1,6 +1,0 @@
-
-[SHARES]
-SHARED_FOLDER = ~/Videos
-UPLOAD_FOLDER = 'Uploads
-SERVER_KEY = shares.key
-SERVER_CERT = shares.pem
