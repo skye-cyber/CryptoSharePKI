@@ -174,5 +174,48 @@ items.forEach(item => {
 
     item.textContent = formattedText; // Update the DOM element
 });
+
+// Global variable to store the selected device
+var selectedDevice = "";
+
+// When the page loads, attach click listeners to device elements
+    // Assume each device is rendered with the class 'device-item'
+    const deviceItems = document.querySelectorAll('.device-item');
+    deviceItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+            // Get the device IP from a data attribute
+            selectedDevice = this.getAttribute('data-device');
+            console.log("Selected device:", selectedDevice);
+            // Optionally update download links immediately after selection
+            updateDownloadLinks();
+            updateViewLinks();
+        });
+    });
+
 });
 
+updateDownloadLinks()
+// Function to update all download links with the selected device
+function updateDownloadLinks() {
+    const downloadLinks = document.getElementById('access-link-download');
+    downloadLinks.forEach(function(link) {
+        const filename = link.getAttribute('data-filename')
+        console.log(filename);
+        // Construct the URL for the download route using the selected device
+        // For example: /download/192.168.1.103/filename.ext
+        link.href = "/download/" + selectedDevice + "/" + filename;
+    });
+}
+
+
+// Function to update all download links with the selected device
+function updateViewLinks() {
+    const downloadLinks = document.getElementById('access-link-view');
+    downloadLinks.forEach(function(link) {
+        const dir = link.getAttribute('data-dir')
+        console.log(dir);
+        // Construct the URL for the download route using the selected device
+        // For example: /download/192.168.1.103/filename.ext
+        link.href = "/view/" + selectedDevice + "/" + dir;
+    });
+}

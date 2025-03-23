@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import pytz
 # Your existing function for CSR generation and submission
 from AutoCertsGen import send_csr
-from PKI_colors import blue, cyan, green, magenta, red, reset, yellow
+from colors import BLUE, CYAN, GREEN, MAGENTA, RED, RESET, YELLOW
 
 HOST_NAME = platform.node()
 # Adjust based on your environment
@@ -118,7 +118,7 @@ def monitor_certificate():
     while True:
         try:
             start_date, expiry_date = get_certificate_dates(CERT_PATH)
-            print(f"Certificate expires on: {yellow}{expiry_date}{reset}")
+            print(f"Certificate expires on: {YELLOW}{expiry_date}{RESET}")
             # Get the current date and time in UTC
             current_date = datetime.now(pytz.UTC)
 
@@ -127,22 +127,22 @@ def monitor_certificate():
             remaining_days = remaining_period.days
 
             print(
-                f"The certificate is valid for: {magenta}{remaining_period.days}{reset} days, {magenta}{remaining_period.seconds // 3600}{reset} hours, and {cyan}{(remaining_period.seconds % 3600) // 60}{reset} minutes.")
+                f"The certificate is valid for: {MAGENTA}{remaining_period.days}{RESET} days, {MAGENTA}{remaining_period.seconds // 3600}{RESET} hours, and {CYAN}{(remaining_period.seconds % 3600) // 60}{RESET} minutes.")
 
             if remaining_days <= RENEWAL_THRESHOLD_DAYS:
                 print(
-                    f"{yellow}{HOST_NAME} CA certificate is about to expire. Initiating renewal process...{reset}")
+                    f"{YELLOW}{HOST_NAME} CA certificate is about to expire. Initiating renewal process...{RESET}")
                 send_csr()  # Trigger the Root CA renewal process
             else:
                 print(
-                    f"{green}{HOST_NAME} CA certificate is still valid. Monitoring...{reset}")
+                    f"{GREEN}{HOST_NAME} CA certificate is still valid. Monitoring...{RESET}")
 
             # Sleep for a day before the next check
             time.sleep(86400)
 
         except Exception as e:
             print(
-                f"{red}Error while monitoring Intermediate CA certificate:{reset} {e}")
+                f"{RED}Error while monitoring Intermediate CA certificate:{RESET} {e}")
             time.sleep(60)  # Retry after 1 minute on failure
         except KeyboardInterrupt:
             print("\nQuit!")
@@ -150,5 +150,5 @@ def monitor_certificate():
 
 
 if __name__ == "__main__":
-    print(f"{cyan}===Monitoring {blue}{HOST_NAME}{cyan} certificate==={reset}")
+    print(f"{CYAN}===Monitoring {BLUE}{HOST_NAME}{CYAN} certificate==={RESET}")
     monitor_certificate()

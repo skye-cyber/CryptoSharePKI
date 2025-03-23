@@ -6,10 +6,10 @@ import warnings
 import requests
 from colorama import Fore, init
 from verifyCATrust import verify_root_ca_trust
-from PKI_colors import blue, cyan, green, magenta, red, reset, yellow
+from colors import BLUE, CYAN, GREEN, MAGENTA, RED, RESET, YELLOW
 
 # Configuration
-init(autoreset=True)
+init(autoRESET=True)
 
 # Suppress the InsecureRequestWarning
 warnings.filterwarnings(
@@ -30,7 +30,7 @@ PRIVATE_KEY_PATH = os.path.join(BASE_DIR, f"{HOST_NAME}.key")
 CSR_PATH = os.path.join(BASE_DIR, f"{HOST_NAME}.csr")
 SIGNED_CERT_PATH = os.path.join(BASE_DIR, f"{HOST_NAME}.pem")
 INTERMEDIATE_CA_CERT_PATH = os.path.join(BASE_DIR, "IntermediateCA.pem")
-ROOTCA_CERT_PATH = os.path.join(BASE_DIR, "WondervilleRootCA.pem")
+ROOTCA_CERT_PATH = os.path.join(BASE_DIR, "CryptoshareRootCA.pem")
 
 
 # Platform-specific paths
@@ -53,7 +53,7 @@ def send_csr():
         with open(CSR_PATH, "rb") as csr_file:
             files = {"csr": csr_file}
             print(
-                f"{cyan}Submitting CSR for {magenta}{HOST_NAME}{cyan} to the Intermediate CA...{reset}")
+                f"{CYAN}Submitting CSR for {MAGENTA}{HOST_NAME}{CYAN} to the Intermediate CA...{RESET}")
 
             # Send the CSR to the Intermediate CA
             response = requests.post(
@@ -66,39 +66,39 @@ def send_csr():
                 intermediate_ca_content = response_data.get(
                     "intermediate_certificate")
                 root_ca_content = response_data.get(
-                    "WondervilleRootCA")
+                    "CryptoshareRootCA")
 
                 if signed_cert_content and intermediate_ca_content and root_ca_content:
                     # Save the signed certificate
                     with open(SIGNED_CERT_PATH, "wb") as cert_file:
                         cert_file.write(signed_cert_content.encode())
                     print(
-                        f"{green}Signed certificate received and saved to {SIGNED_CERT_PATH}{reset}")
+                        f"{GREEN}Signed certificate received and saved to {SIGNED_CERT_PATH}{RESET}")
 
                     # Save the Intermediate CA certificate
                     with open(INTERMEDIATE_CA_CERT_PATH, "wb") as ca_file:
                         ca_file.write(intermediate_ca_content.encode())
                     print(
-                        f"{green}Intermediate CA certificate received and saved to {INTERMEDIATE_CA_CERT_PATH}{reset}")
+                        f"{GREEN}Intermediate CA certificate received and saved to {INTERMEDIATE_CA_CERT_PATH}{RESET}")
 
                     # Save RootCA certificate
                     with open(ROOTCA_CERT_PATH, 'w') as root_cert:
                         root_cert.write(root_ca_content)
                     print(
-                        f"{green}Intermediate CA certificate received and saved to {ROOTCA_CERT_PATH}{reset}")
+                        f"{GREEN}Intermediate CA certificate received and saved to {ROOTCA_CERT_PATH}{RESET}")
 
                     # process_certificate_installation
                     process_certificate_installation()
                 else:
                     print(
-                        f"{red}Failed to process response: Missing certificate data.{reset}")
+                        f"{RED}Failed to process response: Missing certificate data.{RESET}")
             else:
                 print(
-                    f"{red}Failed to submit CSR for {HOST_NAME}. Status code: {response.status_code}{reset}")
-                print(f"{red}Error message: {response.text}{reset}")
+                    f"{RED}Failed to submit CSR for {HOST_NAME}. Status code: {response.status_code}{RESET}")
+                print(f"{RED}Error message: {response.text}{RESET}")
 
     except Exception as e:
-        print(f"{red}Error while submitting CSR for {HOST_NAME}: {e}{reset}")
+        print(f"{RED}Error while submitting CSR for {HOST_NAME}: {e}{RESET}")
 
 
 # Main function
@@ -106,12 +106,12 @@ def send_csr():
 
 def main():
     try:
-        print(f"{blue}Processing host: {HOST_NAME}{reset}")
+        print(f"{BLUE}Processing host: {HOST_NAME}{RESET}")
 
         # Generate private key
         subprocess.run(["openssl", "genrsa", "-out",
                        PRIVATE_KEY_PATH, "2048"], check=True)
-        print(f"{green}Private key generated and saved to {PRIVATE_KEY_PATH}{reset}")
+        print(f"{GREEN}Private key generated and saved to {PRIVATE_KEY_PATH}{RESET}")
 
         # Generate CSR
         subprocess.run(
@@ -119,15 +119,15 @@ def main():
                 "-out", CSR_PATH, "-subj", f"/CN={HOST_NAME}.{DOMAIN}"],
             check=True
         )
-        print(f"{green}CSR generated and saved to {CSR_PATH}{reset}")
+        print(f"{GREEN}CSR generated and saved to {CSR_PATH}{RESET}")
 
         # Submit CSR to Intermediate CA
         send_csr()
 
     except subprocess.CalledProcessError as e:
-        print(f"{red}Error occurred during key or CSR generation: {e}{reset}")
+        print(f"{RED}Error occurRED during key or CSR generation: {e}{RESET}")
     except Exception as e:
-        print(f"{red}Unexpected error: {e}{reset}")
+        print(f"{RED}Unexpected error: {e}{RESET}")
 
 
 def process_certificate_installation():
@@ -140,7 +140,7 @@ def process_certificate_installation():
         pfx_password (str): The password for the PFX file. Defaults to "skyepass".
 
     Raises:
-        FileNotFoundError: If required files are missing.
+        FileNotFoundError: If requiRED files are missing.
         NotImplementedError: If the operating system is unsupported.
     """
     global ca_trust_dir, cert_dir, key_dir  # Ensure these variables are defined in the global scope
@@ -149,12 +149,12 @@ def process_certificate_installation():
 
         # Install certificates
         if current_os == "linux":
-            print(f"{green}Installing Root CA on Linux...{reset}")
+            print(f"{GREEN}Installing Root CA on Linux...{RESET}")
 
             # Install Root CA into system-wide trust store
             subprocess.run(
                 ["sudo", "cp", ROOTCA_CERT_PATH,
-                    "/usr/local/share/ca-certificates/WondervilleRootCA.crt"],
+                    "/usr/local/share/ca-certificates/CryptoshareRootCA.crt"],
                 check=True
             )
 
@@ -173,10 +173,10 @@ def process_certificate_installation():
                 check=True
             )
 
-            print(f"{green}Certificates installed successfully on Linux!{reset}")
+            print(f"{GREEN}Certificates installed successfully on Linux!{RESET}")
 
         elif current_os == "windows":
-            print(f"{yellow}Installing certificates on Windows...{reset}")
+            print(f"{YELLOW}Installing certificates on Windows...{RESET}")
 
             try:
                 # Install Root CA into the system-wide "Root" store
@@ -184,26 +184,26 @@ def process_certificate_installation():
                     ["certutil", "-addstore", "Root", ROOTCA_CERT_PATH],
                     check=True
                 )
-                print(f"{green}Root CA installed successfully in the 'Root' store.{reset}")
+                print(f"{GREEN}Root CA installed successfully in the 'Root' store.{RESET}")
 
                 # Install Intermediate CA into the "CA" store
                 subprocess.run(
                     ["certutil", "-addstore", "CA", INTERMEDIATE_CA_CERT_PATH],
                     check=True
                 )
-                print(f"{green}Intermediate CA installed successfully in the 'CA' store.{reset}")
+                print(f"{GREEN}Intermediate CA installed successfully in the 'CA' store.{RESET}")
 
                 # Install host certificate into the "My" (Personal) store
                 subprocess.run(
                     ["certutil", "-addstore", "My", SIGNED_CERT_PATH],
                     check=True
                 )
-                print(f"{green}Host certificate installed successfully in the 'My' store.{reset}")
+                print(f"{GREEN}Host certificate installed successfully in the 'My' store.{RESET}")
 
             except subprocess.CalledProcessError as e:
-                print(f"{red}Error installing certificates on Windows: {e}{reset}")
+                print(f"{RED}Error installing certificates on Windows: {e}{RESET}")
 
-            print(f"{green}All Certificates installed successfully on Windows!{reset}")
+            print(f"{GREEN}All Certificates installed successfully on Windows!{RESET}")
 
         else:
             raise NotImplementedError(f"OS '{current_os}' not supported.")
@@ -211,16 +211,16 @@ def process_certificate_installation():
         # Verify Root CA trust
         is_trusted = verify_root_ca_trust(INTERMEDIATE_CA_CERT_PATH)
         if is_trusted:
-            print(f"{green}Root CA verification succeeded!{reset}")
+            print(f"{GREEN}Root CA verification succeeded!{RESET}")
         else:
-            print(f"{red}Root CA verification failed.{reset}")
+            print(f"{RED}Root CA verification failed.{RESET}")
 
     except FileNotFoundError as e:
-        print(f"{red}File error: {yellow}{e}{reset}")
+        print(f"{RED}File error: {YELLOW}{e}{RESET}")
     except subprocess.CalledProcessError as e:
-        print(f"{red}Error during certificate installation: {yellow}{e}{reset}")
+        print(f"{RED}Error during certificate installation: {YELLOW}{e}{RESET}")
     except Exception as e:
-        print(f"{red}Unexpected error:{yellow} {e}{reset}")
+        print(f"{RED}Unexpected error:{YELLOW} {e}{RESET}")
 
 
 if __name__ == "__main__":

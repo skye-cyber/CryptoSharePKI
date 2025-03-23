@@ -11,31 +11,31 @@ from verifyCATrust import verify_root_ca_trust
 warnings.filterwarnings(
     "ignore", category=requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
-init(autoreset=True)
+init(autoRESET=True)
 
 # Determine color constants based on the operating system
 if platform.system().lower() == 'windows':
-    green = Fore.GREEN
-    blue = Fore.BLUE
-    red = Fore.RED
-    yellow = Fore.YELLOW
-    cyan = Fore.CYAN
-    magenta = Fore.MAGENTA
-    reset = Fore.RESET
+    GREEN = Fore.GREEN
+    BLUE = Fore.BLUE
+    RED = Fore.RED
+    YELLOW = Fore.YELLOW
+    CYAN = Fore.CYAN
+    MAGENTA = Fore.MAGENTA
+    RESET = Fore.RESET
 elif platform.system().lower() == 'linux':
-    red = "\033[3;2;91m"
-    blue = "\033[3;2;94m"
-    cyan = "\033[3;2;96m"
-    green = "\033[3;2;92m"
-    magenta = "\033[3;2;95m"
-    yellow = "\033[3;2;93m"
-    reset = "\033[0m"
+    RED = "\033[3;2;91m"
+    BLUE = "\033[3;2;94m"
+    CYAN = "\033[3;2;96m"
+    GREEN = "\033[3;2;92m"
+    MAGENTA = "\033[3;2;95m"
+    YELLOW = "\033[3;2;93m"
+    RESET = "\033[0m"
 
 # Configuration
 server_url = "https://172.17.88.189:5000"
 host_name = "172.17.88.189"  # this should be changed to the desktop name
 pfx_file = f"{host_name}.pfx"
-root_ca_file = "WondervilleRootCA.pem"
+root_ca_file = "CryptoshareRootCA.pem"
 
 # Use local directory for portability
 download_dir = os.path.join(os.getcwd(), "certs")
@@ -63,14 +63,14 @@ else:
 def download_file(filename):
     url = f"{server_url}/{filename}"
     local_path = os.path.join(download_dir, filename)
-    print(f"Downloading {blue}{filename}{reset}...")
+    print(f"Downloading {BLUE}{filename}{RESET}...")
     response = requests.get(url, verify=False)  # Disable SSL verification
     if response.status_code == 200:
         with open(local_path, 'wb') as f:
             f.write(response.content)
-        print(f"{magenta}{filename}{green} downloaded successfully!{reset}")
+        print(f"{MAGENTA}{filename}{GREEN} downloaded successfully!{RESET}")
     else:
-        print(f"{red}Failed to download {filename}: {response.status_code}{reset}")
+        print(f"{RED}Failed to download {filename}: {response.status_code}{RESET}")
     return local_path
 
 # Install certificates
@@ -91,7 +91,7 @@ def install_certificates(pfx_path, root_ca_path, pfx_password):
     global host_name, cert_dir, key_dir  # Ensure these variables are defined in the global scope
 
     if platform.system().lower() == "linux":
-        print(f"{green}Installing certificates on Linux...{reset}")
+        print(f"{GREEN}Installing certificates on Linux...{RESET}")
 
         try:
             # Extract the certificate from the PFX file
@@ -117,13 +117,13 @@ def install_certificates(pfx_path, root_ca_path, pfx_password):
             # Update the system's CA certificates
             subprocess.run(["update-ca-certificates"], check=True)
 
-            print(f"{green}Certificates installed successfully on Linux!{reset}")
+            print(f"{GREEN}Certificates installed successfully on Linux!{RESET}")
 
         except subprocess.CalledProcessError as e:
-            print(f"{red}Error during Linux certificate installation: {e}{reset}")
+            print(f"{RED}Error during Linux certificate installation: {e}{RESET}")
 
     elif platform.system().lower() == "windows":
-        print(f"{yellow}Installing certificates on Windows...{reset}")
+        print(f"{YELLOW}Installing certificates on Windows...{RESET}")
 
         try:
             # Import the PFX file into the Windows certificate store
@@ -142,7 +142,7 @@ def install_certificates(pfx_path, root_ca_path, pfx_password):
             print("Certificates installed successfully on Windows!")
 
         except subprocess.CalledProcessError as e:
-            print(f"{red}Error during Windows certificate installation: {e}{reset}")
+            print(f"{RED}Error during Windows certificate installation: {e}{RESET}")
 
     else:
         raise NotImplementedError(
@@ -158,9 +158,9 @@ if __name__ == "__main__":
     try:
         is_trusted = verify_root_ca_trust(root_ca_path)
         if is_trusted:
-            print(f"{green}Root CA verification succeeded!{reset}")
+            print(f"{GREEN}Root CA verification succeeded!{RESET}")
         else:
-            print(f"{red}Root CA verification failed.{reset}")
+            print(f"{RED}Root CA verification failed.{RESET}")
     except FileNotFoundError as e:
         print(e)
     except NotImplementedError as e:

@@ -1,0 +1,43 @@
+🔹 Key Features of Your Function:
+Loads the server certificate and private key
+
+The server uses its certificate (signed by the intermediate CA) to establish identity.
+
+Loads the intermediate CA certificate
+
+This ensures the server can verify client certificates.
+
+Enforces client certificate authentication (CERT_REQUIRED)
+
+The server rejects clients without valid certificates.
+
+You can take several approaches to trace and debug the certificate verification process:
+
+1. Using OpenSSL’s s_client for Debugging
+Running the OpenSSL client with extra debug options can help reveal details during the handshake. For example:
+
+bash
+Copy
+Edit
+openssl s_client -connect 192.168.43.233:9001 -state -debug -showcerts
+-state and -debug: Print verbose information about the handshake process.
+
+-showcerts: Displays the full certificate chain.
+
+2. Setting an Info Callback in Python
+Python’s SSLContext allows you to set an info callback to get more detailed information during the handshake. For example:
+import ssl
+
+def info_callback(connection, where, ret):
+    if where & ssl.SSL_CB_HANDSHAKE_START:
+        print("Handshake started")
+    if where & ssl.SSL_CB_HANDSHAKE_DONE:
+        print("Handshake finished")
+    # You can print additional state information here.
+    # Note: The callback is called for various SSL events.
+    print("where:", where, "ret:", ret)
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context.set_info_callback(info_callback)
+# ... load your certificates and configure context ...
+

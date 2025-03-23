@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+echo "Removing namespaces and network interfaces..."
+
+for i in $(seq 1 10); do
+    NS="dev$i"
+    VETH_HOST="veth$i"
+
+    # Delete namespace
+    if ip netns list | grep -q "$NS"; then
+        sudo ip netns delete "$NS"
+        echo "Deleted namespace $NS."
+    fi
+
+    # Delete veth pair
+    if ip link show "$VETH_HOST" &>/dev/null; then
+        sudo ip link delete "$VETH_HOST"
+        echo "Deleted veth pair $VETH_HOST."
+    fi
+done
+
+# Remove bridge if it exists
+if ip link show br0 &>/dev/null; then
+    sudo ip link set br0 down
+    sudo ip link delete br0 type bridge
+    echo "Deleted bridge br0."
+fi
+
+echo "Cleanup complete."

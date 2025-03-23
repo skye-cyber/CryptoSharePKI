@@ -6,3 +6,6 @@ cryptography
 uwsgi
 pywin32
 python-magic
+pytz
+psutil
+python-magic

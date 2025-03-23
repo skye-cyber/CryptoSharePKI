@@ -190,6 +190,11 @@ Edit the following variables in the script as needed:
 ---
 
 ## **Troubleshooting**
+### **SSL secure connection failure**
+## Check server certificate
+```bash
+openssl s_client -connect 192.168.43.233:9001 -showcerts
+```
 
 ### **File Not Encrypted**
 - Ensure the file doesn't already have the `.enc` extension.

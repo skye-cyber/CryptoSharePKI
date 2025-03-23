@@ -14,7 +14,7 @@
     <section class="w-[98vw] min-h-[100dvh] bg-gradient-to-r from-blue-100 to-sky-100 dark:bg-gradient-to-r dark:from-slate-950 dark:to-slate-950 border-2 border-x-blue-400 border-y-cyan-400 mx-2 md:mx-4 my-2 md:my-4 dark:bg-slate-950 shadow-md rounded-md">
         <div class="absolute mx-2">
             <div class="fixed left-[85vw] md:right-[94vw] p-2 z-50 no-cursor">
-                <button id="theme-toggle" aria-label="Toggle Dark Mode" class="hover:text-yellow-400 transition-colors duration-300 rounded-full p-2 focus:outline-none bg-cyan-400">
+                <button id="theme-toggle" aria-label="Toggle Dark Mode" class="text-[#ffff00] hover:text-slate-800 dark:hover:text-white transition-colors duration-300 rounded-full p-2 focus:outline-none bg-cyan-400">
                         <svg id="sun-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="15" cy="15" r="6" fill="currentColor" />
                             <line x1="15" y1="1" x2="15" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -27,7 +27,7 @@
                             <line x1="21.5" y1="8.5" x2="24.5" y2="5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         </svg>
                         <svg id="moon-icon" width="30" height="30" viewBox="0 0 24 24" class="w-5 h-5 hidden" aria-hidden="true">
-                            <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10 8.13 8.13 0 0 1-10-10z"/>
+                            <path class="dark:fill-yellow-400" d="M12 2a10 10 0 1 0 10 10 8.13 8.13 0 0 1-10-10z"/>
                         </svg>
                     </button>
             </div>
@@ -59,8 +59,8 @@
                             contenteditable="false"
                             type="text"
                             id="search_bar"
-                            aria-label="Navigate Shared content"
-                            title="Navigate Shared content"
+                            aria-label="Navigate Shayellow content"
+                            title="Navigate Shayellow content"
                             class="block w-full px-12 py-2.5 text-gray-900 placeholder-gray-500 bg-white/80 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out cursor-auto"
                             placeholder="Navigate location...">
                     </div>
@@ -98,10 +98,10 @@
             <div id="fileContainer" class="block grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-11 grid-flow-row gap-2 mt-2">
                 {% if files %}
                 {% for file in files %}
-                    <div class="file-item bg-none flex p-2 rounded-md justify-center items-center">
+                    <div data-filename="{{ file|split }}" class="file-item bg-none flex p-2 rounded-md justify-center items-center">
                         <div class="shared-item">
                             {% if file|mime_type == 'video' or file.endswith('.mp4') or file.endswith('.avi') or file.endswith('.mkv') %}
-                                <a href="{{ url_for('download_file', filename=file|split) }}">
+                                <a id="access-link-download" href="{{ url_for('download_file', device=device, filename=file|split) }}" data-filename="{{ file|split }}">
 
                                     <i>
                                         <svg class="w-14 md:w-14 h-14 md:h-14 hover:scale-110 transition-transform duration-500 ease-in-out transform" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-video" class="svg-inline--fa fa-file-video" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path class="fill-[#00405d] dark:fill-[#7979b5]" d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM64 288c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32l0 96c0 17.7-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32l0-96zM300.9 397.9L256 368l0-64 44.9-29.9c2-1.3 4.4-2.1 6.8-2.1c6.8 0 12.3 5.5 12.3 12.3l0 103.4c0 6.8-5.5 12.3-12.3 12.3c-2.4 0-4.8-.7-6.8-2.1z"></path></svg>
@@ -111,7 +111,7 @@
                                     {% endwith %}
                                 </a>
                             {% elif file|mime_type == 'audio' or file.endswith('.mp3') or file.endswith('.wav') or file.endswith('.aac') or file.endswith('.ogg') %}
-                                <a href="{{ url_for('download_file', filename=file|split) }}">
+                                <a id="access-link-download" href="{{ url_for('download_file', device=device, filename=file|split) }}" data-filename="{{ file|split }}">
 
                                     <i>
                                         <svg class="w-14 md:w-14 h-14 md:h-14 hover:scale-110 transition-transform duration-500 ease-in-out transform fill-orange-700 dark:fill-cyan-600" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-audio" class="svg-inline--fa fa-file-audio" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zm2 226.3c37.1 22.4 62 63.1 62 109.7s-24.9 87.3-62 109.7c-7.6 4.6-17.4 2.1-22-5.4s-2.1-17.4 5.4-22C269.4 401.5 288 370.9 288 336s-18.6-65.5-46.5-82.3c-7.6-4.6-10-14.4-5.4-22s14.4-10 22-5.4zm-91.9 30.9c6 2.5 9.9 8.3 9.9 14.8l0 128c0 6.5-3.9 12.3-9.9 14.8s-12.9 1.1-17.4-3.5L113.4 376 80 376c-8.8 0-16-7.2-16-16l0-48c0-8.8 7.2-16 16-16l33.4 0 35.3-35.3c4.6-4.6 11.5-5.9 17.4-3.5zm51 34.9c6.6-5.9 16.7-5.3 22.6 1.3C249.8 304.6 256 319.6 256 336s-6.2 31.4-16.3 42.7c-5.9 6.6-16 7.1-22.6 1.3s-7.1-16-1.3-22.6c5.1-5.7 8.1-13.1 8.1-21.3s-3.1-15.7-8.1-21.3c-5.9-6.6-5.3-16.7 1.3-22.6z"></path></svg>
@@ -121,7 +121,7 @@
                                     {% endwith %}
                                 </a>
                             {% elif file|mime_type == 'text' or file.endswith('.pdf') or file.endswith('.doc') or file.endswith('.docx') or file.endswith('.xlsx') or file.endswith('.xls') or file.endswith('.csv') or file.endswith('.txt') or file.endswith('.odf') or file.endswith('.odg') or file.endswith('.ppt') or file.endswith('.pptx') or file.endswith('.xcf') %}
-                                <a href="{{ url_for('download_file', filename=file|split) }}">
+                                <a id="access-link-download" href="{{ url_for('download_file', device=device, filename=file|split) }}" data-filename="{{ file|split }}">
 
                                     <i>
                                         <svg class="w-14 md:w-14 h-14 md:h-14 hover:scale-110 transition-transform duration-500 ease-in-out transform" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file" class="svg-inline--fa fa-file" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
@@ -143,7 +143,7 @@
                                     {% endwith %}
                                 </a>
                             {% elif file|mime_type == 'image' or file.endswith('.jpg') or file.endswith('.jpeg') or file.endswith('.png') or file.endswith('.gif') %}
-                                <a href="{{ url_for('download_file', filename=file|split) }}">
+                                <a id="access-link-download" href="{{ url_for('download_file', device=device, filename=file|split) }}" data-filename="{{ file|split }}">
 
                                     <i>
                                         <svg class="w-8 md:w-12 h-14 md:h-22 hover:scale-110 transition-transform duration-500 ease-in-out transform" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-image" class="svg-inline--fa fa-file-image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
@@ -162,7 +162,7 @@
                                     {% endwith %}
                                 </a>
                                 {% elif file.endswith('.tar') or file.endswith('.zip') or file.endswith('.gz') or file.endswith('.rar') %}
-                                <a href="{{ url_for('download_file', filename=file|split) }}">
+                                <a id="access-link-download" href="{{ url_for('download_file', device=device, filename=file|split) }}" data-filename="{{ file|split }}">
 
                                     <i>
                                         <svg class="w-14 md:w-14 h-14 md:h-14 hover:scale-110 transition-transform duration-500 ease-in-out transform" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -181,7 +181,7 @@
                                     {% endwith %}
                                 </a>
                             {% elif file|split|is_directory %}
-                                <a href="{{ url_for('open_dir', dir=file|split) }}">
+                                <a id="access-link-view" href="{{ url_for('open_dir', device=device, dir=file|split) }}" data-dir="{{ file|split }}">
 
                                     <i>
                                         <svg class="w-14 md:w-14 h-14 md:h-14 hover:scale-110 transition-transform duration-500 ease-in-out transform" aria-hidden="true" focusable="true" data-prefix="fas" data-icon="folder" class="svg-inline--fa fa-folder" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -201,7 +201,7 @@
                                     {% endwith %}
                                 </a>
                             {% else %}
-                                <a href="{{ url_for('download_file', filename=file|split) }}">
+                                <a id="access-link-download" href="{{ url_for('download_file', device=device, filename=file|split) }}" data-filename="{{ file|split }}">
 
                                     <i>
                                         <svg class="w-14 md:w-14 h-14 md:h-14 hover:scale-110 transition-transform duration-500 ease-in-out transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
@@ -223,13 +223,13 @@
                 {% if devices %}
                     <!-- Show available devices -->
                     <section class="p-6 bg-gray-100 min-h-screen bg-gradient-to-r from-blue-100 to-sky-100 dark:bg-gradient-to-r dark:from-slate-950 dark:to-slate-950 ">
-                    <div class="block w-full">
+                        <div class="block w-full">
                             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-300 text-center mb-0 border-none">Available Devices</h2>
                             <p class="h-1 rounded-full bg-gradient-to-r from-[#aa00ff] via-sky-400 via-teal-400 to-blue-500 shadow-2xl shadow-slate-900"></p>
                         </div>
-                        <div class="max-w-5xl mx-auto grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 grid-flow-row gap-4 mt-2">
+                        <div class="max-w-5xl mx-auto grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 grid-flow-row gap-4 mt-2">
                             {% for device in devices %}
-                                <div class="flex min-w-fit max-w-24 max-h-26 min-h-fit p-2 md:p-4 rounded-xl justify-center items-center shadow-lg hover:shadow-2xl transition-all duration-300 bg-sky-300 dark:bg-orange-600 text-white">
+                                <div data-device="{{ device['ip'] }}" class="device-item flex min-w-fit max-w-24 max-h-26 min-h-fit p-2 md:p-4 rounded-xl justify-center items-center shadow-lg hover:shadow-2xl transition-all duration-300 bg-sky-300 dark:bg-orange-600 text-white">
                                     <a href="{{ url_for('show_device_shares', device=device['ip']) }}">
                                     <div class="w-6 lg:w-20 lg:h-20 h-6 mb-1">
                                     {% with icon=device['os_type']|get_icon %}
@@ -267,13 +267,13 @@
                         <!-- Animate dashoffset to simulate the snake movement -->
                         <animate attributeName="stroke-dashoffset" from="400" to="0" dur="6s" repeatCount="indefinite" />
                         <!-- Optionally animate the stroke (or gradient stops) to alternate colors -->
-                        <animate attributeName="stroke" values="red;blue;green;red;#555500" dur="4s" repeatCount="indefinite" />
+                        <animate attributeName="stroke" values="yellow;blue;green;yellow;#555500" dur="4s" repeatCount="indefinite" />
                         </rect>
                     </svg>
 
                     <!-- actual content -->
                     <div class="relative z-10 flex items-center justify-center">
-                        <p class="text-xl text-orange-800 dark:text-red-400 font-bold"><span class="h-10 w-10 text-red-500 mr-4" fill="none" viewBox="0 0 24 24">⚠️</span>Folder is Empty!</p>
+                        <p class="text-xl text-orange-800 dark:text-yellow-400 font-bold"><span class="h-10 w-10 text-yellow-500 mr-4" fill="none" viewBox="0 0 24 24">⚠️</span>Folder is Empty!</p>
                     </div>
                 </div>
             {% endif %}
