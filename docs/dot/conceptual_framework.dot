@@ -1,0 +1,20 @@
+digraph ConceptualFramework {
+    rankdir=TB;
+  node [shape=box, fontname="Arial", style="rounded,filled", fillcolor="#E8E8E8"];
+
+  "User" [label="User Device\n(Key Pair & CSR Generation)"];
+  "Intermediate CA" [label="Intermediate CA\n(Validates CSR, Signs Request,\nReturns Signed Certificate + CA Chain)"];
+  "PKCS12" [label="PKCS#12 Package\n(Contains Private Key & CA Credentials)"];
+  "Browser" [label="Web Browser\n(Imports PKCS#12,\nInitiates SSL/TLS Handshake)"];
+  "ShareKit" [label="ShareKit File Sharing\nServer Activation"];
+  "SSL" [label="SSL/TLS Handshake\n(Validates Certificates)"];
+  "Secure" [label="Secure File Sharing Platform\n(View Shares & Download Files)"];
+
+  "User" -> "Intermediate CA" [label="Send CSR"];
+  "Intermediate CA" -> "PKCS12" [label="Return Signed Cert + CA Chain"];
+  "PKCS12" -> "Browser" [label="Import PKCS#12"];
+  "Browser" -> "SSL" [label="Initiate Handshake"];
+  "SSL" -> "ShareKit" [label="Connect to Server"];
+  "Browser" -> "Secure" [label="Access Platform"];
+  "ShareKit" -> "Secure" [label="Serve File Shares"];
+}
