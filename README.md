@@ -4,7 +4,7 @@
 # **Dynamic PKI-Enabled File Encryption System**
 
 ## **Overview**
-This project implements a
+This project implements:
 1. **PKI -> Public Key infrastructure**
 2. **PKI-enabled file encryption and decryption system** with automated directory monitoring and **file sharing** capabilities. The system is designed to facilitate secure file sharing, authentication, and encryption in a networked environment, using certificates issued by a Root CA and signed by an Intermediate CA.
 
@@ -145,10 +145,11 @@ git clone https://github.com/skye-cyber/CryptoSharePKI
    ```shell
    pip install -r requirements.txt
    ```
-  or sometimes on windows:
-    ```shell
+   or sometimes on windows:
+   ```shell
    py -m pip install -r requirements.txt
    ```
+   
 3. Initialize the Root CA:
    ```shell
    python manage.py init
@@ -162,10 +163,10 @@ git clone https://github.com/skye-cyber/CryptoSharePKI
 ![title](./docs/CA_init.png "CA_init")
 ---
 4. Start the Intermediate CA server:
-   ```shell
-   python manage.py server intermediate
-   ```
-   - This starts a PKI server where hosts/users can connect to obtain, sign, or update their certificates.
+```shell
+python manage.py server intermediate
+```
+- This starts a PKI server where hosts/users can connect to obtain, sign, or update their certificates.
    
 ![title](./docs/intermediate-server.png "intermediate-server")
 ---
