@@ -33,7 +33,7 @@ This project implements a
 ---
 
 #### **Files and Structure**
-```bash
+```shell
 CryptoSharePKI
 ├── CryptoCA
 │   ├── CA_CSR_server.py
@@ -117,7 +117,8 @@ CryptoSharePKI
 └── utils
     ├── colors.py
     └── __init__.py
-    ```
+```
+
 ## Project Description
 - The`userKit` directory contains user logic files.
 - The`CryptoCA` directory contains all ``CA`` implementation files.
@@ -127,7 +128,8 @@ CryptoSharePKI
 - The `manage.py` implements simple CLI acess to all the project operation for: **CA**, **User**, && **File sharing**.
 
 ## **Setup Instructions**
-`**A**`. **clone The project**.
+**A**.
+### **clone The project**.
 ```bash
 git clone https://github.com/skye-cyber/CryptoSharePKI
 ```
@@ -152,7 +154,7 @@ git clone https://github.com/skye-cyber/CryptoSharePKI
    python manage.py init
    ```
    or on linux:
-    ```shell
+   ```shell
    ./manage.py init
    ```
    This script generates the Root CA keys and sets up the Intermediate CA.
@@ -164,6 +166,7 @@ git clone https://github.com/skye-cyber/CryptoSharePKI
    python manage.py server intermediate
    ```
    - This starts a PKI server where hosts/users can connect to obtain, sign, or update their certificates.
+   
 ![title](./docs/intermediate-server.png "intermediate-server")
 ---
 
