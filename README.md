@@ -18,6 +18,7 @@ This project implements a
 2. **Host Certificates**:
    - Hosts generate unique certificate signing requests (CSRs) and obtain signed certificates from the Intermediate CA.
    - Signed certificates are installed with the Intermediate CA and Root CA certificates to complete the chain of trust.
+   - During this process a ``PKCS#12`` (**.p12**) is created and stored in th ```userKit/host_certs``` dir, this certificates is to be imported to a browser to enable server access.
 
 3. **File Encryption and Decryption**:
    - Encrypts files dynamically using public keys from a shared public key store.
@@ -25,18 +26,114 @@ This project implements a
 
 4. **File Sharing**:
    - Hosts can share files over the network using a lightweight file-sharing server.
-   - Includes support for file uploads and downloads within the same network.
+   - Includes support for file downloads within the same network.
+   - The server is protected behide the PKI framework such that only the certified entities can access it.
+   - User can specify the file of folder to share in `SharKit-conf.ini`
 
 ---
 
-## **Setup Instructions**
-
-### **1. Root CA Setup**
-
 #### **Files and Structure**
-- All files outside the `users@hosts` directory belong to the Root CA.
+```bash
+CryptoSharePKI
+├── CryptoCA
+│   ├── CA_CSR_server.py
+│   ├── config.ini
+│   ├── intermediate_ca
+│   ├── IntermediateCA_self_monitor.py
+│   ├── pki_certs
+│   ├── root_ca
+│   └── RootCA.py
+├── docs
+│   ├── auto_cert_gen_unix.png
+│   ├── auto_cert_gen_win.png
+│   ├── autRootcr_unix.png
+│   ├── certficate_verified.png
+│   ├── cert_gen_unix.png
+│   ├── cert_info1.png
+│   ├── cert_info2.png
+│   ├── cert_info.png
+│   ├── chromium_cert_import.png
+│   ├── chromium_cert_request.png
+│   ├── demo.mkv
+│   ├── directWIN.png
+│   ├── doc.txt
+│   ├── evolution-PGP-public key.png
+│   ├── File sharing _ Upload and Download.pdf
+│   ├── firefox_cert_request.png
+│   ├── gurnicon.png
+│   ├── importer_unix.png
+│   ├── import_unix_sucess.png
+│   ├── PRIVIlege_windows.png
+│   ├── README.docx
+│   ├── root_ver_fail.png
+│   ├── shared-dark.png
+│   ├── share_files_dark.png
+│   ├── share_files_light.png
+│   ├── sm-create-namespaces.png
+│   ├── trust_verify_true.png
+│   ├── verifyCATrust_unix.png
+│   ├── verify_seccess.png
+│   └── win_privilges.png
+├── gunicorn.conf.py
+├── host_importer.py
+├── installer.py
+├── manage.py
+├── README.md
+├── requirements.txt
+├── setup.py
+├── ShareKit
+│   ├── App
+│   ├── device_info.py
+│   ├── EFS.py
+│   ├── ensure_admin.py
+│   ├── __init__.py
+│   ├── net_scanner.py
+│   ├── read_config.py
+│   ├── server_cert.py
+│   └── sharekit-conf.ini
+├── simulate.py
+├── simulations
+│   ├── cleanup_netns.sh
+│   └── setup_netns.sh
+├── tests
+│   ├── AutoCertsGen.py
+│   ├── host_cert_importer.py
+│   ├── host_cert_monitor.py
+│   ├── hosts.json
+│   ├── opensslSetup.py
+│   ├── PKI@Pro.zip.asc
+│   └── scp_distribute_certificates.py
+├── userKit
+│   ├── AutoCertsGen.py
+│   ├── config.ini
+│   ├── export2p12.py
+│   ├── hostCertMonitor.py
+│   ├── host_certs
+│   ├── opensslSetup.py
+│   ├── PKI_colors.py
+│   ├── requirements.txt
+│   ├── src
+│   └── verifyCATrust.py
+└── utils
+    ├── colors.py
+    └── __init__.py
+    ```
+## Project Description
+- The`userKit` directory contains user logic files.
+- The`CryptoCA` directory contains all ``CA`` implementation files.
+- The`ShareKit` directory contains file sharing server implementation.
+- The`utils` directory contains common dependency logic files.
+- The`simulations` directory contains Namespace simulation logic for linux environment, which simulates the file sharing between clients.
+- The `manage.py` implements simple CLI acess to all the project operation for: **CA**, **User**, && **File sharing**.
 
-#### **Steps**
+## **Setup Instructions**
+`**A**`. **clone The project**.
+```bash
+git clone https://github.com/skye-cyber/CryptoSharePKI
+```
+
+**B**.
+### **1. Root CA Setup**
 1. Transfer the Root CA files to the server machine (Windows/Linux).
 2. Install the required libraries:
    ```shell
@@ -46,26 +143,32 @@ This project implements a
    ```shell
    pip install -r requirements.txt
    ```
-
+  or sometimes on windows:
+    ```shell
+   py -m pip install -r requirements.txt
+   ```
 3. Initialize the Root CA:
    ```shell
-   python AutoRootCA_PKI.py
+   python manage.py init
+   ```
+   or on linux:
+    ```shell
+   ./manage.py init
    ```
    This script generates the Root CA keys and sets up the Intermediate CA.
 
+![title](./docs/CA_init.png "CA_init")
+---
 4. Start the Intermediate CA server:
    ```shell
-   python WIN-N55Q3T15CyEL4_server.py
+   python manage.py server intermediate
    ```
    - This starts a PKI server where hosts/users can connect to obtain, sign, or update their certificates.
-
+![title](./docs/intermediate-server.png "intermediate-server")
 ---
 
+**C**.
 ### **2. Host/User Setup**
-
-#### **Files and Structure**
-- Host assets are located in the `users@hosts` directory.
-- These files should be transferred to the user's computer for local operations.
 
 #### **Steps**
 1. Transfer the host files to the user's computer.
@@ -80,7 +183,7 @@ This project implements a
 
 3. Generate Certificates:
    ```shell
-   python AutoCertsGen.py
+   python manage.py setup
    ```
    - This script generates the host's unique certificate and requests signing from the Intermediate CA.
    - The Intermediate CA:
@@ -91,24 +194,20 @@ This project implements a
 4. Verify Certificates:
    - Once installed, the host verifies the authenticity of the Intermediate CA certificate.
 
+![image](./docs/CA_init.png "setup image")
 ---
 
+**D**.
 ### **3. File Sharing**
 
 #### **Steps**
 1. Start the File Sharing Server:
     ```shell
-   gunicorn -c gunicorn.conf.py  FileShareProServer:app
+   python manage.py share
    ```
-    **NOT RECOMMENDED but still works fine**
-
-    ```shell
-   python FileShareProServer.py
-   ```
-   - This file is located in the `App` directory.
 
 2. Configure the Server:
-   - Open the `.ini` file and:
+   - Open the `.ini` file in ShareKit and:
      - Set up folder-sharing options.
      - Define the download location.
 
@@ -117,9 +216,17 @@ This project implements a
      - Access the server using its IP address.
      - Download files directly.
      - Upload files to the host.
+     **THIS IS ONLY IF THEY CAN CORRECTLY AUTHENTICATE TO THE INTERMEDIATE AND ROOT CA**
 
+![title](./docs/share.png "share-command-output") 
+---
+![title](./docs/shared-devices.png "shared devices preview light")
+---
+![title](./docs/shared-dark.png "shared web preview dark")
 ---
 
+**NOT YET COMPLETED**
+|-->
 ## **Advanced Usage**
 
 ### **File Encryption and Decryption**
@@ -186,15 +293,17 @@ Edit the following variables in the script as needed:
 2024-11-23 14:15:12 - INFO - Temporary file /tmp/document.txt deleted securely.
 2024-11-23 14:15:13 - INFO - File encrypted: /mnt/shared_folder/document.txt.enc
 ```
-
+|<--
 ---
 
 ## **Troubleshooting**
 ### **SSL secure connection failure**
 ## Check server certificate
 ```bash
-openssl s_client -connect 192.168.43.233:9001 -showcerts
+openssl s_client -connect <target server ip>:9001 -showcerts
 ```
+![title](./docs/openssl-show-cert.png "openssl-show-cert")
+---
 
 ### **File Not Encrypted**
 - Ensure the file doesn't already have the `.enc` extension.
@@ -223,6 +332,9 @@ openssl s_client -connect 192.168.43.233:9001 -showcerts
 
 4. **GUI**:
    - Develop a graphical interface for easier management of encryption and file sharing.
+
+5. **File Encryption** 
+- complete implementation of a robust and reliable encryption.
 
 ---
 

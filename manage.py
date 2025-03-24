@@ -1,13 +1,13 @@
+#!/usr/bin/env python
 import argparse
 import os
 import sys
 import re
-import time
 import threading
 import subprocess
 from ShareKit.net_scanner import get_ip_address
 from utils.colors import (BLUE, IBLUE, GREEN, MAGENTA, RESET, DMAGENTA,
-                          DBLUE, DGREEN, BWHITE, DWHITE, LBLUE, YELLOW, CYAN, IWHITE, DYELLOW, RED)
+                          DBLUE, DGREEN, BWHITE, DWHITE, LBLUE, YELLOW, CYAN, IWHITE, RED)
 from CryptoCA.RootCA import main as ca_init
 from CryptoCA.IntermediateCA_self_monitor import monitor_intermediate_ca as intermiate_cert_monitor
 from CryptoCA.CA_CSR_server import server as ca_csr_server
