@@ -1,0 +1,12 @@
+digraph Schedule {
+  rankdir=TB;
+  node [shape=box, style="filled", fillcolor="#DFF2BF", fontname="Arial"];
+
+  Week1 [label="Week 1:\nRequirements & Design"];
+  Week2 [label="Week 2:\nBack-end Implementation\n(PKI Integration)"];
+  Week3 [label="Week 3:\nFront-end & Server Integration"];
+  Week4 [label="Week 4:\nTesting & Debugging"];
+  Week5 [label="Week 5:\nReview, Documentation & Deployment"];
+
+  Week1 -> Week2 -> Week3 -> Week4 -> Week5;
+}

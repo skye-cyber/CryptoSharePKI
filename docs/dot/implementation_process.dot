@@ -1,0 +1,14 @@
+digraph ImplementationProcess {
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fillcolor="#C9DAF8", fontname="Arial"];
+
+  R [label="Requirements\n& Design"];
+  P [label="PKI Infrastructure\nDevelopment"];
+  S [label="ShareKit Server\nDevelopment"];
+  F [label="Front-end UI\nDevelopment"];
+  I [label="System Integration\n& Testing"];
+  D [label="Deployment\n& Monitoring"];
+  T [label="Documentation\n& Training"];
+
+  R -> P -> S -> F -> I -> D -> T;
+}

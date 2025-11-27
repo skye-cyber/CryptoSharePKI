@@ -1,6 +1,6 @@
 digraph ConceptualFramework {
     rankdir=TB;
-  node [shape=box, fontname="Arial", style="rounded,filled", fillcolor="#E8E8E8"];
+  node [shape=box, fontname="Arial", style="rounded,filled", fillcolor="#aaffff"];
 
   "User" [label="User Device\n(Key Pair & CSR Generation)"];
   "Intermediate CA" [label="Intermediate CA\n(Validates CSR, Signs Request,\nReturns Signed Certificate + CA Chain)"];

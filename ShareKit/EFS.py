@@ -90,6 +90,7 @@ def open_svg_dir(dir):
         abort(500)
 
 
+"""
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
@@ -99,55 +100,64 @@ def upload_file():
     except Exception as e:
         print(str(e))
         return "An error occurRED while processing your request."
+"""
+
+MAX_ZIP_SIZE = 50 * 1024 * 1024  # 50 MB
+
+
+def safe_join(base, *paths):
+    base_path = Path(base).resolve()
+    full_path = (base_path / Path(*paths)).resolve()
+
+    if not full_path.is_relative_to(base_path):
+        raise ValueError("Path traversal attempt detected!")
+
+    return full_path
+
+
+def zip_directory(source_dir, output_zip):
+    with zipfile.ZipFile(output_zip, 'w') as zipf:
+        total_size = 0
+        for root, _, files in os.walk(source_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                file_size = os.path.getsize(file_path)
+
+                total_size += file_size
+                if total_size > MAX_ZIP_SIZE:
+                    raise ValueError("Zip file too large!")
+
+                zipf.write(file_path, os.path.relpath(file_path, start=source_dir))
 
 
 @app.route('/download/<device>/<path:filename>', methods=['GET'])
 def download_file(device, filename):
     try:
+        safe_path = safe_join(SHARED_FOLDER, filename)
 
-        fpath = os.path.join(os.path.join(SHARED_FOLDER, filename))
+        if safe_path.is_file():
+            return send_from_directory(SHARED_FOLDER, safe_path.name, as_attachment=True)
 
-        if os.path.isfile(fpath):
-            return send_from_directory(SHARED_FOLDER, filename, as_attachment=True)
-        elif os.path.isdir(fpath):
-            # Create a ZipFile object in write mode
-            output_zip = os.path.join(SHARED_FOLDER, f"{filename}.zip")
+        elif safe_path.is_dir():
+            output_zip = safe_path.with_suffix(".zip")
 
-            with zipfile.ZipFile(output_zip, 'w') as zipf:
-                # Walk through the directory and add files to the zip
-                for root, _, files in os.walk(fpath):
-                    for file in files:
-                        file_path = os.path.join(root, file)
-                        # Write the file to the zip file with a relative path
-                        zipf.write(file_path, os.path.relpath(
-                            file_path, start=fpath))
+            zip_directory(safe_path, output_zip)
 
-            # Function to delete the zip file after it has been sent
             @after_this_request
             def remove_file(response):
-                output_zip_path = os.path.join(SHARED_FOLDER, output_zip)
                 try:
-                    while True:
-                        # Ensure the response is complete before deleting the file
-                        if response.status_code == 200:
-                            try:
-                                print(f"Deleting {output_zip_path}")
-                                os.remove(output_zip_path)
-                                break
-                            except Exception as e:
-                                print(f"Error removing file: {e}")
-                        time.sleep(2)
+                    os.unlink(output_zip)
                 except Exception as e:
-                    print(e)
+                    print(f"Error removing file: {e}")
                 return response
 
-            return send_from_directory(SHARED_FOLDER, os.path.basename(output_zip), device=device, as_attachment=True)
+            return send_from_directory(SHARED_FOLDER, output_zip.name, as_attachment=True)
+
         else:
             return "File or directory not found.", 404
     except Exception as e:
-        raise
-        print(str(e))
-        return "An error occurRED while processing your request."
+        print(f"Error: {e}")
+        return "An error occurred while processing your request.", 500
 
 
 @app.template_filter('is_directory')

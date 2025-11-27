@@ -1,0 +1,14 @@
+digraph FrontEnd {
+  rankdir=TB;
+  node [shape=box, fontname="Arial", style="rounded,filled", fillcolor="#D0E1F9"];
+
+  "User Device" [label="User Device\n(Imports PKCS#12)"];
+  "Web Browser" [label="Web Browser\n(Initiates SSL/TLS Handshake)"];
+  "ShareKit Server" [label="ShareKit File Sharing\nServer"];
+  "User Dashboard" [label="User Dashboard\n(View Shares & Files)"];
+
+  "User Device" -> "Web Browser" [label="Access Interface"];
+  "Web Browser" -> "ShareKit Server" [label="SSL/TLS Handshake"];
+  "ShareKit Server" -> "Web Browser" [label="Serve Secure Content"];
+  "Web Browser" -> "User Dashboard" [label="Display Dashboard"];
+}
